@@ -1,0 +1,3 @@
+git add .
+git commit -m "Mise à jour pour GitHub Pages"
+git push origin main
