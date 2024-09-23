@@ -38,6 +38,11 @@ document.getElementById('scoreForm').addEventListener('submit', function(event) 
 
     // Mettre à jour le tableau des scores
     updateScoreboard(round, hole);
+
+    // Lancer le rafraîchissement de la page après 60 secondes
+    setTimeout(function() {
+        location.reload(); // Recharge la page après 60 secondes
+    }, 60000); // 60 000 ms = 60 secondes
 });
 
 // Fonction pour mettre à jour le tableau des scores
@@ -82,8 +87,3 @@ function updateScoreboard(round, hole) {
         tbody.appendChild(row);
     });
 }
-
-// Rafraîchir la page toutes les 10 secondes
-setInterval(function() {
-    location.reload(); // Recharge la page pour obtenir les nouveaux scores
-}, 10000); // 10 000 ms = 10 secondes
