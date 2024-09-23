@@ -12,7 +12,7 @@ let players = {
     "Jorge de la Caba": []
 };
 
-// Écouteur d'événements pour soumettre les scores
+// Écouter l'événement pour soumettre les scores
 document.getElementById('scoreForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -82,3 +82,8 @@ function updateScoreboard(round, hole) {
         tbody.appendChild(row);
     });
 }
+
+// Rafraîchir la page toutes les 10 secondes
+setInterval(function() {
+    location.reload(); // Recharge la page pour obtenir les nouveaux scores
+}, 10000); // 10 000 ms = 10 secondes
