@@ -1,48 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIVE SCORING OC MEN QUALIFICATION</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIVE SCORING OC MEN QUALIFICATION</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1 class="title">LIVE SCORING OC MEN QUALIFICATION</h1>
+  <div class="container">
+    <h1>LIVE SCORING OC MEN QUALIFICATION</h1>
 
-        <!-- Formulaire pour entrer les scores -->
-        <form id="scoreForm">
-            <label for="player">Player Name:</label>
-            <input type="text" id="player" name="player" required list="playerList">
-            <datalist id="playerList">
-                <option value="Dominic Morton">
-                <option value="Adam Bresnu">
-                <option value="Chase Williams">
-                <option value="Joseph Linel">
-                <option value="Gianni Perilli">
-                <option value="Reda El Hali">
-                <option value="Ken Gao">
-                <option value="Dian">
-                <option value="Corley">
-                <option value="Jorge de la Caba">
-            </datalist>
+    <!-- Formulaire pour entrer les scores -->
+    <form id="scoreForm">
+      <label for="player">Player Name:</label>
+      <input type="text" id="player" name="player" required>
+      <label for="hole">Hole (1-18):</label>
+      <input type="number" id="hole" name="hole" min="1" max="18" required>
+      <label for="round">Round (1-4):</label>
+      <input type="number" id="round" name="round" min="1" max="4" required>
+      <label for="score">Score:</label>
+      <input type="number" id="score" name="score" required>
+      <button type="submit">Submit Score</button>
+    </form>
 
-            <label for="hole">Hole (1-18):</label>
-            <input type="number" id="hole" name="hole" min="1" max="18" required>
+    <!-- Tableau pour afficher les scores -->
+    <h2>Live Scores</h2>
+    <table id="liveScores">
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Hole</th>
+          <th>Round</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Les scores seront affichés ici en temps réel -->
+      </tbody>
+    </table>
+  </div>
 
-            <label for="round">Round (1-4):</label>
-            <input type="number" id="round" name="round" min="1" max="4" required>
-
-            <label for="score">Score:</label>
-            <input type="number" id="score" name="score" required>
-
-            <button type="submit">Submit Score</button>
-        </form>
-
-        <!-- Tableau pour afficher les scores -->
-        <h2>Live Scores</h2>
-        <table id="liveScores">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+ 
