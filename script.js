@@ -1,4 +1,19 @@
-// Initialiser les joueurs
+// Configuration Firebase
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialiser Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+
+// Initialiser les joueurs (ceci est utilisé pour le stockage local avant l'envoi à Firebase)
 let players = {
     "Dominic Morton": [],
     "Adam Bresnu": [],
@@ -12,9 +27,9 @@ let players = {
     "Jorge de la Caba": []
 };
 
-// Écouter l'événement pour soumettre les scores
+// Écouter l'événement de soumission du formulaire de score
 document.getElementById('scoreForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+    event.preventDefault();  // Empêche le rechargement de la page
 
     // Récupérer les valeurs du formulaire
     const playerName = document.getElementById('player').value;
@@ -22,68 +37,72 @@ document.getElementById('scoreForm').addEventListener('submit', function(event) 
     const round = parseInt(document.getElementById('round').value);
     const score = parseInt(document.getElementById('score').value);
 
-    // Vérifier si le joueur existe
+    // Vérifier si le joueur existe dans la liste
     if (players[playerName]) {
         if (!players[playerName][round]) {
             players[playerName][round] = [];
         }
         players[playerName][round].push(score);
+
+        // Enregistrer les scores dans Firebase
+        firebase.database().ref('scores/' + playerName).set(players[playerName]);
+
     } else {
-        alert("Player not found!");
+        alert("Joueur introuvable !");
         return;
     }
 
-    // Réinitialiser le formulaire après soumission
+    // Réinitialiser le formulaire
     document.getElementById('scoreForm').reset();
-
-    // Mettre à jour le tableau des scores
-    updateScoreboard(round, hole);
-
-    // Lancer le rafraîchissement de la page après 60 secondes
-    setTimeout(function() {
-        location.reload(); // Recharge la page après 60 secondes
-    }, 60000); // 60 000 ms = 60 secondes
 });
 
-// Fonction pour mettre à jour le tableau des scores
-function updateScoreboard(round, hole) {
+// Fonction pour mettre à jour le tableau des scores en direct
+function updateScoreboard() {
     const tbody = document.querySelector('#liveScores tbody');
-    tbody.innerHTML = ''; // Vider le tableau actuel
+    tbody.innerHTML = ''; // Vider le tableau pour réafficher les nouvelles données
 
-    // Calculer les scores totaux des joueurs
-    const playerTotals = Object.keys(players).map(player => {
-        let totalScore = 0;
-        let lastRound = round;
-        for (let i = 1; i <= round; i++) {
-            if (players[player][i]) {
-                totalScore += players[player][i].reduce((a, b) => a + b, 0);
+    // Récupérer les scores depuis Firebase en temps réel
+    firebase.database().ref('scores').on('value', (snapshot) => {
+        const data = snapshot.val();  // Récupérer les données de Firebase
+
+        const playerTotals = Object.keys(data).map(player => {
+            let totalScore = 0;
+            let lastRound = 0;
+
+            // Calculer le score total par joueur
+            Object.keys(data[player]).forEach(round => {
+                totalScore += data[player][round].reduce((a, b) => a + b, 0);
+                lastRound = round;  // Mettre à jour le dernier round joué
+            });
+
+            return { player, totalScore, lastRound };
+        });
+
+        // Trier les joueurs par leur score total (le plus bas d'abord)
+        playerTotals.sort((a, b) => a.totalScore - b.totalScore);
+
+        // Afficher les scores dans le tableau
+        playerTotals.forEach((playerData, index) => {
+            const row = document.createElement('tr');
+
+            // Déterminer la couleur du score en fonction de la valeur
+            let scoreColor = 'black';
+            if (playerData.totalScore < 0) {
+                scoreColor = 'red';
+            } else if (playerData.totalScore === 0) {
+                scoreColor = 'green';
             }
-        }
-        return { player, totalScore, lastRound, lastHole: hole };
-    });
 
-    // Trier les joueurs par leur score total (le plus bas d'abord)
-    playerTotals.sort((a, b) => a.totalScore - b.totalScore);
-
-    // Afficher le classement et les scores
-    playerTotals.forEach((player, index) => {
-        const row = document.createElement('tr');
-
-        // Déterminer la couleur du score en fonction de la valeur
-        let scoreColor = 'black';
-        if (player.totalScore < 0) {
-            scoreColor = 'red';
-        } else if (player.totalScore === 0) {
-            scoreColor = 'green';
-        }
-
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${player.player}</td>
-            <td style="color:${scoreColor}">${player.totalScore}</td>
-            <td>Round ${player.lastRound}</td>
-            <td>After hole ${player.lastHole}</td>
-        `;
-        tbody.appendChild(row);
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${playerData.player}</td>
+                <td style="color:${scoreColor}">${playerData.totalScore}</td>
+                <td>Round ${playerData.lastRound}</td>
+            `;
+            tbody.appendChild(row);
+        });
     });
 }
+
+// Mettre à jour le tableau des scores dès qu'il y a un changement dans Firebase
+updateScoreboard();
