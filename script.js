@@ -1,4 +1,4 @@
-// Configuration Firebase
+// Configuration Firebase (remplacer par les infos de ton projet)
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -13,21 +13,7 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-// Initialiser les joueurs (ceci est utilisé pour le stockage local avant l'envoi à Firebase)
-let players = {
-    "Dominic Morton": [],
-    "Adam Bresnu": [],
-    "Chase Williams": [],
-    "Joseph Linel": [],
-    "Gianni Perilli": [],
-    "Reda El Hali": [],
-    "Ken Gao": [],
-    "Dian": [],
-    "Corley": [],
-    "Jorge de la Caba": []
-};
-
-// Écouter l'événement de soumission du formulaire de score
+// Soumettre les scores
 document.getElementById('scoreForm').addEventListener('submit', function(event) {
     event.preventDefault();  // Empêche le rechargement de la page
 
@@ -37,48 +23,54 @@ document.getElementById('scoreForm').addEventListener('submit', function(event) 
     const round = parseInt(document.getElementById('round').value);
     const score = parseInt(document.getElementById('score').value);
 
-    // Vérifier si le joueur existe dans la liste
-    if (players[playerName]) {
-        if (!players[playerName][round]) {
-            players[playerName][round] = [];
-        }
-        players[playerName][round].push(score);
-
-        // Enregistrer les scores dans Firebase
-        firebase.database().ref('scores/' + playerName).set(players[playerName]);
-
-    } else {
-        alert("Joueur introuvable !");
+    // Vérifier si les informations sont correctes
+    if (!playerName || isNaN(hole) || isNaN(round) || isNaN(score)) {
+        alert("Veuillez remplir tous les champs correctement.");
         return;
     }
 
-    // Réinitialiser le formulaire
+    // Enregistrer les scores dans Firebase
+    firebase.database().ref('scores/' + playerName + '/round' + round + '/hole' + hole).set(score)
+        .then(() => {
+            console.log("Score enregistré avec succès !");
+        })
+        .catch((error) => {
+            console.error("Erreur lors de l'enregistrement du score :", error);
+        });
+
+    // Réinitialiser le formulaire après soumission
     document.getElementById('scoreForm').reset();
 });
 
-// Fonction pour mettre à jour le tableau des scores en direct
+// Fonction pour mettre à jour le tableau des scores en temps réel
 function updateScoreboard() {
     const tbody = document.querySelector('#liveScores tbody');
-    tbody.innerHTML = ''; // Vider le tableau pour réafficher les nouvelles données
+    tbody.innerHTML = '';  // Vider le tableau
 
     // Récupérer les scores depuis Firebase en temps réel
     firebase.database().ref('scores').on('value', (snapshot) => {
-        const data = snapshot.val();  // Récupérer les données de Firebase
+        const data = snapshot.val();
+        if (!data) {
+            console.log("Aucun score disponible");
+            return;
+        }
 
         const playerTotals = Object.keys(data).map(player => {
             let totalScore = 0;
             let lastRound = 0;
 
-            // Calculer le score total par joueur
+            // Calculer le score total par joueur et par round
             Object.keys(data[player]).forEach(round => {
-                totalScore += data[player][round].reduce((a, b) => a + b, 0);
-                lastRound = round;  // Mettre à jour le dernier round joué
+                Object.values(data[player][round]).forEach(holeScore => {
+                    totalScore += holeScore;
+                });
+                lastRound = round;  // Mettre à jour le dernier round
             });
 
             return { player, totalScore, lastRound };
         });
 
-        // Trier les joueurs par leur score total (le plus bas d'abord)
+        // Trier les joueurs par score total (le plus bas d'abord)
         playerTotals.sort((a, b) => a.totalScore - b.totalScore);
 
         // Afficher les scores dans le tableau
@@ -104,5 +96,5 @@ function updateScoreboard() {
     });
 }
 
-// Mettre à jour le tableau des scores dès qu'il y a un changement dans Firebase
+// Appeler la fonction pour mettre à jour le tableau des scores dès qu'il y a un changement dans Firebase
 updateScoreboard();
