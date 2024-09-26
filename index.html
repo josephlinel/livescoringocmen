@@ -3,85 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUALIFICATION LIFE GOING</title>
+    <title>GOLF QUALIFICATION LIVE SCORING</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <header>
-    <h1>QUALIFICATION LIFE GOING</h1>
+    <h1>GOLF QUALIFICATION LIVE SCORING</h1>
 </header>
 
 <div class="container">
     <!-- Tabs for selecting options -->
     <div class="tabs">
         <button class="tablink active" onclick="openTab(event, 'players')">Player Selection</button>
-        <button class="tablink" onclick="openTab(event, 'hole')">Hole Selection</button>
-        <button class="tablink" onclick="openTab(event, 'round')">Round Selection</button>
+        <button class="tablink" onclick="openTab(event, 'holes')">Hole Selection</button>
         <button class="tablink" onclick="openTab(event, 'score')">Score Entry</button>
+        <button class="tablink" onclick="openTab(event, 'leaderboard')">Leaderboard</button>
     </div>
 
-    <!-- Content of the tabs -->
+    <!-- Player Selection -->
     <div id="players" class="content active">
         <h2>Choose a Player</h2>
         <div class="players-list">
             <select id="playerSelect">
                 <option value="">-- Select a Player --</option>
-                <option value="1">Adam Bresnu 🇲🇦 (Morocco)</option>
-                <option value="2">Dominic Morton 🇬🇧 (England)</option>
-                <option value="3">Jorge de la Cabala 🇲🇽 (Mexico)</option>
-                <option value="4">Chase Williams 🇺🇸 (United States)</option>
-                <option value="5">Reda El Hali 🇲🇦 (Morocco)</option>
-                <option value="6">Ken Gao 🇦🇺 (Australia)</option>
-                <option value="7">Giani Perello 🇩🇪 (Germany)</option>
-                <option value="8">Dian Wilmot 🇿🇦 (South Africa)</option>
-                <option value="9">Joseph Linel 🇫🇷 (France)</option>
-                <option value="10">Corley 🇦🇺 (Australia)</option>
+                <option value="Adam Bresnu">Adam Bresnu 🇲🇦 (Morocco)</option>
+                <option value="Dominic Morton">Dominic Morton 🇬🇧 (England)</option>
+                <option value="Jorge de la Cabala">Jorge de la Cabala 🇲🇽 (Mexico)</option>
+                <option value="Chase Williams">Chase Williams 🇺🇸 (United States)</option>
+                <option value="Reda El Hali">Reda El Hali 🇲🇦 (Morocco)</option>
+                <option value="Ken Gao">Ken Gao 🇦🇺 (Australia)</option>
+                <option value="Giani Perello">Giani Perello 🇩🇪 (Germany)</option>
+                <option value="Dian Wilmot">Dian Wilmot 🇿🇦 (South Africa)</option>
+                <option value="Joseph Linel">Joseph Linel 🇫🇷 (France)</option>
+                <option value="Corley">Corley 🇦🇺 (Australia)</option>
             </select>
         </div>
     </div>
 
-    <div id="hole" class="content">
+    <!-- Hole Selection -->
+    <div id="holes" class="content">
         <h2>Choose a Hole</h2>
         <select id="holeSelect">
             <option value="">-- Select a Hole --</option>
-            <option value="1">Hole 1</option>
-            <option value="2">Hole 2</option>
-            <option value="3">Hole 3</option>
-            <option value="4">Hole 4</option>
+            <option value="1">Hole 1 (Par 4)</option>
+            <option value="2">Hole 2 (Par 5)</option>
+            <option value="3">Hole 3 (Par 3)</option>
+            <option value="4">Hole 4 (Par 4)</option>
         </select>
     </div>
 
-    <div id="round" class="content">
-        <h2>Choose a Round</h2>
-        <select id="roundSelect">
-            <option value="">-- Select a Round --</option>
-            <option value="1">Round 1</option>
-            <option value="2">Round 2</option>
-            <option value="3">Round 3</option>
-            <option value="4">Round 4</option>
-            <option value="5">Round 5</option>
-        </select>
-    </div>
-
+    <!-- Score Entry -->
     <div id="score" class="content">
-        <h2>Enter Scores Hole by Hole</h2>
+        <h2>Enter Score for the Player</h2>
         <div class="score-input">
             <input type="number" id="scoreInput" placeholder="Enter score">
             <button onclick="addScore()">Add Score</button>
         </div>
     </div>
 
-    <!-- Ranking -->
-    <div class="ranking">
-        <h2>Player Rankings</h2>
-        <table id="rankingTable">
+    <!-- Leaderboard -->
+    <div id="leaderboard" class="content">
+        <h2>Leaderboard</h2>
+        <table id="leaderboardTable">
             <thead>
                 <tr>
                     <th>Player</th>
-                    <th>Hole</th>
-                    <th>Round</th>
-                    <th>Score</th>
+                    <th>Total Score</th>
                 </tr>
             </thead>
             <tbody>
