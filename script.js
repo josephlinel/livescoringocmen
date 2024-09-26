@@ -1,38 +1,59 @@
-            Object.values(data[player][round]).forEach(holeData => {
-                    totalScore += holeData.score;  // Somme des scores
-                });
-                lastRound = round;  // Dernier round
-            });
+   // Connexion au serveur Socket.IO
+const socket = io('http://localhost:3000');
 
-            // Ajouter les données du joueur au tableau
-            playerTotals.push({ player, totalScore, lastRound });
-        });
-
-        // Trier les joueurs par score total (le plus bas d'abord)
-        playerTotals.sort((a, b) => a.totalScore - b.totalScore);
-
-        // Afficher les scores dans le tableau
-        playerTotals.forEach((playerData, index) => {
-            const row = document.createElement('tr');
-
-            // Déterminer la couleur du score en fonction de la valeur
-            let scoreColor = 'black';
-            if (playerData.totalScore < 0) {
-                scoreColor = 'red';
-            } else if (playerData.totalScore === 0) {
-                scoreColor = 'green';
-            }
-
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${playerData.player}</td>
-                <td style="color:${scoreColor}">${playerData.totalScore}</td>
-                <td>Round ${playerData.lastRound}</td>
-            `;
-            tbody.appendChild(row);
-        });
-    });
+// Fonction pour déterminer la classe de couleur en fonction du score par rapport au par
+function getScoreClass(score) {
+    if (score < 0) {
+        return 'under-par';
+    } else if (score === 0) {
+        return 'par';
+    } else {
+        return 'over-par';
+    }
 }
 
-// Appeler la fonction pour mettre à jour le tableau des scores dès qu'il y a un changement dans Firebase
-updateScoreboard();
+// Gérer la soumission du formulaire pour envoyer les scores au serveur
+document.getElementById('scoreForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Empêche le rechargement de la page
+
+    // Récupérer les valeurs du formulaire
+    const player = document.getElementById('player').value;
+    const round = document.getElementById('round').value;
+    const hole = document.getElementById('hole').value;
+    const score = document.getElementById('score').value;
+
+    // Envoi des données au serveur via Socket.IO
+    socket.emit('submit_score', {
+        player_name: player,
+        nationality: player.includes('🇲🇦') ? '🇲🇦' :
+                     player.includes('🇬🇧') ? '🇬🇧' :
+                     player.includes('🇲🇽') ? '🇲🇽' :
+                     player.includes('🇺🇸') ? '🇺🇸' :
+                     player.includes('🇦🇺') ? '🇦🇺' :
+                     player.includes('🇩🇪') ? '🇩🇪' :
+                     player.includes('🇿🇦') ? '🇿🇦' :
+                     '🇫🇷', // Récupération du drapeau
+        score: parseInt(score),
+        hole_number: parseInt(hole)
+    });
+
+    // Réinitialiser le formulaire après soumission
+    document.getElementById('scoreForm').reset();
+});
+
+// Écouteur pour recevoir les scores en temps réel
+socket.on('new_score', function(data) {
+    const scoreTable = document.getElementById('scoreTable');
+    const newRow = document.createElement('tr');
+    
+    // Création des cellules avec les informations du score
+    newRow.innerHTML = `
+        <td>${data.player_name}</td>
+        <td>${data.nationality}</td>
+        <td class="${getScoreClass(data.score)}">${data.score}</td>
+        <td>${data.hole_number}</td>
+    `;
+
+    // Ajout de la nouvelle ligne au tableau
+    scoreTable.appendChild(newRow);
+});
