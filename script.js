@@ -1,72 +1,56 @@
-// Configuration Firebase (à remplacer par vos informations Firebase)
-const firebaseConfig = {
-    apiKey: "VOTRE_API_KEY",
-    authDomain: "votre-projet.firebaseapp.com",
-    databaseURL: "https://votre-projet.firebaseio.com",
-    projectId: "votre-projet-id",
-    storageBucket: "votre-projet.appspot.com",
-    messagingSenderId: "VOTRE_MESSAGING_SENDER_ID",
-    appId: "VOTRE_APP_ID"
-};
+// Function to open a tab
+function openTab(evt, tabName) {
+    var i, content, tablinks;
+    content = document.getElementsByClassName("content");
+    for (i = 0; i < content.length; i++) {
+        content[i].style.display = "none";
+        content[i].classList.remove("active");
+    }
+    tablinks = document.getElementsByClassName("tablink");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.classList.add("active");
+}
 
-// Initialiser Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-const scoresRef = database.ref('scores');
+// Array to hold scores
+var scores = [];
 
-// Ajouter un score
-const form = document.getElementById('scoreForm');
-form.addEventListener('submit', function(e) {
-    e.preventDefault();
+function addScore() {
+    var playerSelect = document.getElementById("playerSelect");
+    var scoreInput = document.getElementById("scoreInput").value;
+    var playerName = playerSelect.options[playerSelect.selectedIndex].text;
 
-    const playerData = document.getElementById('player').value.split(' ');
-    const player = playerData[0];
-    const nationality = playerData[1];
-    const round = document.getElementById('round').value;
-    const hole = document.getElementById('hole').value;
-    const score = parseInt(document.getElementById('score').value);
+    if (!playerSelect.value || scoreInput === "") {
+        alert("Please select a player and enter a score.");
+        return;
+    }
 
-    // Ajouter le score à Firebase
-    scoresRef.push({
-        joueur: player,
-        nationalite: nationality,
-        round: round,
-        trou: hole,
-        score: score
+    // Add score to the array
+    scores.push({ player: playerName, score: parseInt(scoreInput) });
+
+    // Sort scores
+    scores.sort((a, b) => a.score - b.score);
+
+    // Reset the table
+    var tableBody = document.querySelector("#rankingTable tbody");
+    tableBody.innerHTML = "";
+
+    // Display the updated ranking
+    scores.forEach(function (item) {
+        var row = document.createElement("tr");
+        var playerCell = document.createElement("td");
+        playerCell.textContent = item.player;
+        var scoreCell = document.createElement("td");
+        scoreCell.textContent = item.score;
+        scoreCell.className = "score " + (item.score < 0 ? "negative" : item.score === 0 ? "neutral" : "positive");
+        row.appendChild(playerCell);
+        row.appendChild(scoreCell);
+        tableBody.appendChild(row);
     });
 
-    // Réinitialiser le formulaire
-    form.reset();
-});
-
-// Afficher les scores en temps réel
-scoresRef.on('value', (snapshot) => {
-    const scoreTable = document.getElementById('scoreTable');
-    let scoresArray = [];
-
-    snapshot.forEach((scoreSnapshot) => {
-        const scoreData = scoreSnapshot.val();
-        scoresArray.push(scoreData);
-    });
-
-    // Trier les scores
-    scoresArray.sort((a, b) => a.score - b.score);
-
-    // Afficher les scores triés
-    scoreTable.innerHTML = '';
-    scoresArray.forEach((scoreData) => {
-        const scoreClass = scoreData.score === 0 ? 'score-par' :
-                           scoreData.score < 0 ? 'score-under-par' : 'score-over-par';
-
-        const newRow = `
-            <tr>
-                <td>${scoreData.joueur}</td>
-                <td>${scoreData.nationalite}</td>
-                <td>${scoreData.round}</td>
-                <td>${scoreData.trou}</td>
-                <td class="${scoreClass}">${scoreData.score}</td>
-            </tr>
-        `;
-        scoreTable.innerHTML += newRow;
-    });
-});
+    // Reset input fields
+    document.getElementById("scoreInput").value = "";
+    playerSelect.value = "";
+}
