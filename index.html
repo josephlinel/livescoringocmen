@@ -17,7 +17,7 @@
     <div class="tabs">
         <button class="tablink active" onclick="openTab(event, 'players')">Player Selection</button>
         <button class="tablink" onclick="openTab(event, 'hole')">Hole Selection</button>
-        <button class="tablink" onclick="openTab(event, 'raw')">Raw Selection</button>
+        <button class="tablink" onclick="openTab(event, 'round')">Round Selection</button>
         <button class="tablink" onclick="openTab(event, 'score')">Score Entry</button>
     </div>
 
@@ -52,15 +52,15 @@
         </select>
     </div>
 
-    <div id="raw" class="content">
-        <h2>Choose a Raw</h2>
-        <select id="rawSelect">
-            <option value="">-- Select a Raw --</option>
-            <option value="1">Raw 1</option>
-            <option value="2">Raw 2</option>
-            <option value="3">Raw 3</option>
-            <option value="4">Raw 4</option>
-            <option value="5">Raw 5</option>
+    <div id="round" class="content">
+        <h2>Choose a Round</h2>
+        <select id="roundSelect">
+            <option value="">-- Select a Round --</option>
+            <option value="1">Round 1</option>
+            <option value="2">Round 2</option>
+            <option value="3">Round 3</option>
+            <option value="4">Round 4</option>
+            <option value="5">Round 5</option>
         </select>
     </div>
 
@@ -74,4 +74,24 @@
 
     <!-- Ranking -->
     <div class="ranking">
-       
+        <h2>Player Rankings</h2>
+        <table id="rankingTable">
+            <thead>
+                <tr>
+                    <th>Player</th>
+                    <th>Hole</th>
+                    <th>Round</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Player scores will be displayed here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="scripts.js"></script>
+
+</body>
+</html>
