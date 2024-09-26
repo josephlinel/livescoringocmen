@@ -11,32 +11,60 @@
 
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
         }
         h1 {
-            color: #4682B4;
+            text-align: center;
+            padding: 20px;
+            background-color: #4CAF50;
+            color: white;
+            margin: 0;
         }
         form {
-            margin-bottom: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        input, button {
+        form input, form select, form button {
+            width: 100%;
             padding: 10px;
-            margin: 5px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        form button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        form button:hover {
+            background-color: #45a049;
         }
         table {
-            width: 100%;
+            width: 90%;
+            margin: 20px auto;
             border-collapse: collapse;
-            margin-top: 20px;
         }
         th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
+            padding: 15px;
             text-align: center;
+            border-bottom: 1px solid #ddd;
         }
         th {
-            background-color: #4682B4;
+            background-color: #4CAF50;
             color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
         }
         .score-par {
             color: green;
@@ -85,7 +113,7 @@
         <button type="submit">Ajouter le score</button>
     </form>
 
-    <h2>Scores en direct :</h2>
+    <h2 style="text-align: center;">Scores en direct :</h2>
     <table>
         <thead>
             <tr>
@@ -145,10 +173,21 @@
         // Afficher les scores en temps réel
         scoresRef.on('value', (snapshot) => {
             const scoreTable = document.getElementById('scoreTable');
-            scoreTable.innerHTML = ''; // Réinitialiser le tableau
+            let scoresArray = [];
 
             snapshot.forEach((scoreSnapshot) => {
                 const scoreData = scoreSnapshot.val();
+                scoresArray.push(scoreData);  // Ajouter chaque score au tableau pour trier plus tard
+            });
+
+            // Trier les scores par ordre croissant (du plus bas au plus élevé)
+            scoresArray.sort((a, b) => a.score - b.score);
+
+            // Réinitialiser le tableau
+            scoreTable.innerHTML = '';
+
+            // Ajouter les scores triés au tableau
+            scoresArray.forEach((scoreData) => {
                 const scoreClass = scoreData.score === 0 ? 'score-par' :
                                    scoreData.score < 0 ? 'score-under-par' : 'score-over-par';
 
