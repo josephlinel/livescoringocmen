@@ -1,59 +1,72 @@
-   // Connexion au serveur Socket.IO
-const socket = io('http://localhost:3000');
+// Configuration Firebase (à remplacer par vos informations Firebase)
+const firebaseConfig = {
+    apiKey: "VOTRE_API_KEY",
+    authDomain: "votre-projet.firebaseapp.com",
+    databaseURL: "https://votre-projet.firebaseio.com",
+    projectId: "votre-projet-id",
+    storageBucket: "votre-projet.appspot.com",
+    messagingSenderId: "VOTRE_MESSAGING_SENDER_ID",
+    appId: "VOTRE_APP_ID"
+};
 
-// Fonction pour déterminer la classe de couleur en fonction du score par rapport au par
-function getScoreClass(score) {
-    if (score < 0) {
-        return 'under-par';
-    } else if (score === 0) {
-        return 'par';
-    } else {
-        return 'over-par';
-    }
-}
+// Initialiser Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+const scoresRef = database.ref('scores');
 
-// Gérer la soumission du formulaire pour envoyer les scores au serveur
-document.getElementById('scoreForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // Empêche le rechargement de la page
+// Ajouter un score
+const form = document.getElementById('scoreForm');
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
 
-    // Récupérer les valeurs du formulaire
-    const player = document.getElementById('player').value;
+    const playerData = document.getElementById('player').value.split(' ');
+    const player = playerData[0];
+    const nationality = playerData[1];
     const round = document.getElementById('round').value;
     const hole = document.getElementById('hole').value;
-    const score = document.getElementById('score').value;
+    const score = parseInt(document.getElementById('score').value);
 
-    // Envoi des données au serveur via Socket.IO
-    socket.emit('submit_score', {
-        player_name: player,
-        nationality: player.includes('🇲🇦') ? '🇲🇦' :
-                     player.includes('🇬🇧') ? '🇬🇧' :
-                     player.includes('🇲🇽') ? '🇲🇽' :
-                     player.includes('🇺🇸') ? '🇺🇸' :
-                     player.includes('🇦🇺') ? '🇦🇺' :
-                     player.includes('🇩🇪') ? '🇩🇪' :
-                     player.includes('🇿🇦') ? '🇿🇦' :
-                     '🇫🇷', // Récupération du drapeau
-        score: parseInt(score),
-        hole_number: parseInt(hole)
+    // Ajouter le score à Firebase
+    scoresRef.push({
+        joueur: player,
+        nationalite: nationality,
+        round: round,
+        trou: hole,
+        score: score
     });
 
-    // Réinitialiser le formulaire après soumission
-    document.getElementById('scoreForm').reset();
+    // Réinitialiser le formulaire
+    form.reset();
 });
 
-// Écouteur pour recevoir les scores en temps réel
-socket.on('new_score', function(data) {
+// Afficher les scores en temps réel
+scoresRef.on('value', (snapshot) => {
     const scoreTable = document.getElementById('scoreTable');
-    const newRow = document.createElement('tr');
-    
-    // Création des cellules avec les informations du score
-    newRow.innerHTML = `
-        <td>${data.player_name}</td>
-        <td>${data.nationality}</td>
-        <td class="${getScoreClass(data.score)}">${data.score}</td>
-        <td>${data.hole_number}</td>
-    `;
+    let scoresArray = [];
 
-    // Ajout de la nouvelle ligne au tableau
-    scoreTable.appendChild(newRow);
+    snapshot.forEach((scoreSnapshot) => {
+        const scoreData = scoreSnapshot.val();
+        scoresArray.push(scoreData);
+    });
+
+    // Trier les scores
+    scoresArray.sort((a, b) => a.score - b.score);
+
+    // Afficher les scores triés
+    scoreTable.innerHTML = '';
+    scoresArray.forEach((scoreData) => {
+        const scoreClass = scoreData.score === 0 ? 'score-par' :
+                           scoreData.score < 0 ? 'score-under-par' : 'score-over-par';
+
+        const newRow = `
+            <tr>
+                <td>${scoreData.joueur}</td>
+                <td>${scoreData.nationalite}</td>
+                <td>${scoreData.round}</td>
+                <td>${scoreData.trou}</td>
+                <td class="${scoreClass}">${scoreData.score}</td>
+            </tr>
+        `;
+        scoreTable.innerHTML += newRow;
+    });
 });
