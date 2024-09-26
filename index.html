@@ -3,62 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Scoring Qualification OC Men</title>
-    <link rel="stylesheet" href="style.css"> <!-- Liaison avec le fichier CSS -->
+    <title>Live Scoring Golf</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #4682B4;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #4682B4;
+            color: white;
+        }
+        .score-par {
+            color: green;
+        }
+        .score-under-par {
+            color: red;
+        }
+        .score-over-par {
+            color: black;
+        }
+    </style>
 </head>
 <body>
+    <h1>Live Scoring Qualification OC Men</h1>
 
-<h1>Live Scoring Qualification OC Men</h1>
+    <!-- Formulaire pour ajouter un score -->
+    <form id="scoreForm">
+        <label for="player">Joueur :</label>
+        <select id="player" required>
+            <option value="Adam Bresnu 🇲🇦">Adam Bresnu 🇲🇦</option>
+            <option value="Dominic Morton 🇬🇧">Dominic Morton 🇬🇧</option>
+            <option value="Jorge de la Cabala 🇲🇽">Jorge de la Cabala 🇲🇽</option>
+            <option value="Chase Williams 🇺🇸">Chase Williams 🇺🇸</option>
+            <option value="Reda El Hali 🇲🇦">Reda El Hali 🇲🇦</option>
+            <option value="Ken Gao 🇦🇺">Ken Gao 🇦🇺</option>
+            <option value="Giani Perello 🇩🇪">Giani Perello 🇩🇪</option>
+            <option value="Dian Wilmot 🇿🇦">Dian Wilmot 🇿🇦</option>
+            <option value="Joseph Linel 🇫🇷">Joseph Linel 🇫🇷</option>
+        </select>
 
-<!-- Formulaire pour choisir le joueur, le round, le trou et le score -->
-<form id="scoreForm">
-    <label for="player">Player:</label>
-    <select id="player" name="player">
-        <option value="Adam Bresnu">Adam Bresnu 🇲🇦</option>
-        <option value="Dominic Morton">Dominic Morton 🇬🇧</option>
-        <option value="Jorge de la Cabala">Jorge de la Cabala 🇲🇽</option>
-        <option value="Chase Williams">Chase Williams 🇺🇸</option>
-        <option value="Reda El Hali">Reda El Hali 🇲🇦</option>
-        <option value="Ken Gao">Ken Gao 🇦🇺</option>
-        <option value="Giani Perello">Giani Perello 🇩🇪</option>
-        <option value="Dian Wilmot">Dian Wilmot 🇿🇦</option>
-        <option value="Joseph Linel">Joseph Linel 🇫🇷</option>
-    </select>
+        <label for="round">Round :</label>
+        <select id="round" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
 
-    <label for="round">Round:</label>
-    <select id="round" name="round">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-    </select>
+        <label for="hole">Trou :</label>
+        <input type="number" id="hole" min="1" max="18" required>
 
-    <label for="hole">Hole:</label>
-    <input type="number" id="hole" name="hole" min="1" max="18" required>
+        <label for="score">Score :</label>
+        <input type="number" id="score" required>
 
-    <label for="score">Score:</label>
-    <input type="number" id="score" name="score" required>
+        <button type="submit">Ajouter le score</button>
+    </form>
 
-    <button type="submit">Submit Score</button>
-</form>
+    <h2>Scores en direct :</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Joueur</th>
+                <th>Nationalité</th>
+                <th>Round</th>
+                <th>Trou</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody id="scoreTable">
+            <!-- Les scores en temps réel seront ajoutés ici -->
+        </tbody>
+    </table>
 
-<!-- Tableau pour afficher les scores en temps réel -->
-<table>
-    <thead>
-        <tr>
-            <th>Player</th>
-            <th>Nationality</th>
-            <th>Score</th>
-            <th>Hole</th>
-        </tr>
-    </thead>
-    <tbody id="scoreTable">
-        <!-- Les scores en temps réel seront insérés ici -->
-    </tbody>
-</table>
+    <script>
+        // Configuration Firebase (à remplacer avec vos propres informations de projet Firebase)
+        const firebaseConfig = {
+            apiKey: "VOTRE_API_KEY",
+            authDomain: "votre-projet.firebaseapp.com",
+            databaseURL: "https://votre-projet.firebaseio.com",  // L'URL de votre Realtime Database
+            projectId: "votre-projet-id",
+            storageBucket: "votre-projet.appspot.com",
+            messagingSenderId: "VOTRE_MESSAGING_SENDER_ID",
+            appId: "VOTRE_APP_ID"
+        };
 
-<script src="/socket.io/socket.io.js"></script> <!-- Importation de Socket.IO -->
-<script src="script.js"></script> <!-- Liaison avec le fichier JS -->
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const scoresRef = database.ref('scores');
+
+        // Ajouter un score
+        const form = document.getElementById('scoreForm');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const playerData = document.getElementById('player').value.split(' ');
+            const player = playerData[0];
+            const nationality = playerData[1];
+            const round = document.getElementById('round').value;
+            const hole = document.getElementById('hole').value;
+            const score = document.getElementById('score').value;
+
+            // Envoyer le score à Firebase
+            scoresRef.push({
+                joueur: player,
+                nationalite: nationality,
+                round: round,
+                trou: hole,
+                score: parseInt(score)
+            });
+
+            form.reset(); // Réinitialiser le formulaire après soumission
+        });
+
+        // Afficher les scores en temps réel
+        scoresRef.on('value', (snapshot) => {
+            const scoreTable = document.getElementById('scoreTable');
+            scoreTable.innerHTML = ''; // Réinitialiser le tableau
+
+            snapshot.forEach((scoreSnapshot) => {
+                const scoreData = scoreSnapshot.val();
+                const scoreClass = scoreData.score === 0 ? 'score-par' :
+                                   scoreData.score < 0 ? 'score-under-par' : 'score-over-par';
+
+                const newRow = `
+                    <tr>
+                        <td>${scoreData.joueur}</td>
+                        <td>${scoreData.nationalite}</td>
+                        <td>${scoreData.round}</td>
+                        <td>${scoreData.trou}</td>
+                        <td class="${scoreClass}">${scoreData.score}</td>
+                    </tr>
+                `;
+                scoreTable.innerHTML += newRow;
+            });
+        });
+    </script>
 </body>
 </html>
