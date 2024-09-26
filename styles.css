@@ -1,133 +1,34 @@
-/* Styles globaux */
-body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-}
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
+const path = require('path');
 
-/* Conteneur principal */
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #ffffff;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    margin-top: 30px;
-}
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
 
-/* Titre en majuscules avec couleurs blanc et bleu clair */
-.title {
-    text-align: center;
-    font-size: 36px;
-    text-transform: uppercase; /* Titre en majuscules */
-    color: #007bff; /* Bleu clair */
-    background-color: #ffffff; /* Fond blanc */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-}
+// Servir les fichiers statiques (HTML, CSS, JS)
+app.use(express.static(path.join(__dirname, 'public')));
 
-/* Style du formulaire */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
-    margin-bottom: 30px;
-}
+// Ecoute des connexions des clients
+io.on('connection', (socket) => {
+    console.log('A new user connected');
 
-label {
-    font-size: 18px;
-    font-weight: bold;
-}
+    // Écouter la soumission de scores depuis le formulaire
+    socket.on('submit_score', (data) => {
+        console.log('Score received:', data);
 
-input, button {
-    width: 100%;
-    max-width: 400px;
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
-}
+        // Diffuser les données du score à tous les clients connectés
+        io.emit('new_score', data);
+    });
 
-button {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
+    // Déconnexion d'un client
+    socket.on('disconnect', () => {
+        console.log('A user disconnected');
+    });
+});
 
-button:hover {
-    background-color: #218838;
-}
-
-/* Style du tableau */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    font-size: 16px;
-}
-
-th, td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-th {
-    background-color: #007bff;
-    color: white;
-}
-
-td {
-    background-color: #f9f9f9;
-}
-
-/* Responsive Design pour tablettes et mobiles */
-@media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
-
-    form, input, button {
-        max-width: 100%;
-        font-size: 14px;
-    }
-
-    table {
-        font-size: 14px;
-    }
-
-    .title {
-        font-size: 28px;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 5px;
-    }
-
-    form, input, button {
-        padding: 8px;
-        font-size: 14px;
-    }
-
-    table {
-        font-size: 12px;
-    }
-
-    th, td {
-        padding: 8px;
-    }
-
-    .title {
-        font-size: 24px;
-    }
-}
+// Démarrer le serveur
+server.listen(3000, () => {
+    console.log('Server is running on port 3000');
+});
