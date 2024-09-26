@@ -4,65 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Scoring Qualification OC Men</title>
-    <style>
-        /* Style du tableau et de la page */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-        }
-
-        h1 {
-            text-align: center;
-            background-color: #ADD8E6; /* Bleu clair */
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 80%;
-            margin: auto;
-            border-collapse: collapse;
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #ADD8E6; /* Bleu clair */
-            color: white;
-            text-transform: uppercase;
-        }
-
-        td {
-            font-size: 16px;
-        }
-
-        .par {
-            color: green;
-        }
-
-        .under-par {
-            color: red;
-        }
-
-        .over-par {
-            color: black;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css"> <!-- Liaison avec le fichier CSS -->
 </head>
 <body>
 
 <h1>Live Scoring Qualification OC Men</h1>
 
+<!-- Formulaire pour choisir le joueur, le round, le trou et le score -->
+<form id="scoreForm">
+    <label for="player">Player:</label>
+    <select id="player" name="player">
+        <option value="Adam Bresnu">Adam Bresnu 🇲🇦</option>
+        <option value="Dominic Morton">Dominic Morton 🇬🇧</option>
+        <option value="Jorge de la Cabala">Jorge de la Cabala 🇲🇽</option>
+        <option value="Chase Williams">Chase Williams 🇺🇸</option>
+        <option value="Reda El Hali">Reda El Hali 🇲🇦</option>
+        <option value="Ken Gao">Ken Gao 🇦🇺</option>
+        <option value="Giani Perello">Giani Perello 🇩🇪</option>
+        <option value="Dian Wilmot">Dian Wilmot 🇿🇦</option>
+        <option value="Joseph Linel">Joseph Linel 🇫🇷</option>
+    </select>
+
+    <label for="round">Round:</label>
+    <select id="round" name="round">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+
+    <label for="hole">Hole:</label>
+    <input type="number" id="hole" name="hole" min="1" max="18" required>
+
+    <label for="score">Score:</label>
+    <input type="number" id="score" name="score" required>
+
+    <button type="submit">Submit Score</button>
+</form>
+
+<!-- Tableau pour afficher les scores en temps réel -->
 <table>
     <thead>
         <tr>
@@ -77,40 +58,7 @@
     </tbody>
 </table>
 
-<!-- Inclusion du script Socket.IO pour le temps réel -->
-<script src="/socket.io/socket.io.js"></script>
-<script>
-    // Connexion au serveur Socket.IO
-    const socket = io('http://localhost:3000');
-
-    // Fonction pour déterminer la classe de couleur en fonction du score par rapport au par
-    function getScoreClass(score) {
-        if (score < 0) {
-            return 'under-par';
-        } else if (score === 0) {
-            return 'par';
-        } else {
-            return 'over-par';
-        }
-    }
-
-    // Écouteur pour recevoir les scores en temps réel
-    socket.on('new_score', function(data) {
-        const scoreTable = document.getElementById('scoreTable');
-        const newRow = document.createElement('tr');
-        
-        // Création des cellules avec les informations du score
-        newRow.innerHTML = `
-            <td>${data.player_name}</td>
-            <td>${data.nationality}</td>
-            <td class="${getScoreClass(data.score)}">${data.score}</td>
-            <td>${data.hole_number}</td>
-        `;
-
-        // Ajout de la nouvelle ligne au tableau
-        scoreTable.appendChild(newRow);
-    });
-</script>
-
+<script src="/socket.io/socket.io.js"></script> <!-- Importation de Socket.IO -->
+<script src="script.js"></script> <!-- Liaison avec le fichier JS -->
 </body>
 </html>
