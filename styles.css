@@ -1,34 +1,93 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const path = require('path');
+/* Style global */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+    margin: 0;
+    padding: 0;
+}
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
+/* En-tête */
+h1 {
+    text-align: center;
+    background-color: #28a745;
+    color: white;
+    padding: 20px;
+    margin: 0;
+    font-size: 24px;
+    text-transform: uppercase;
+}
 
-// Servir les fichiers statiques (HTML, CSS, JS)
-app.use(express.static(path.join(__dirname, 'public')));
+/* Style du formulaire */
+form {
+    max-width: 600px;
+    margin: 30px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
 
-// Ecoute des connexions des clients
-io.on('connection', (socket) => {
-    console.log('A new user connected');
+form label, form select, form input, form button {
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
 
-    // Écouter la soumission de scores depuis le formulaire
-    socket.on('submit_score', (data) => {
-        console.log('Score received:', data);
+form button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
 
-        // Diffuser les données du score à tous les clients connectés
-        io.emit('new_score', data);
-    });
+form button:hover {
+    background-color: #0056b3;
+}
 
-    // Déconnexion d'un client
-    socket.on('disconnect', () => {
-        console.log('A user disconnected');
-    });
-});
+/* Style du tableau */
+table {
+    width: 90%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
 
-// Démarrer le serveur
-server.listen(3000, () => {
-    console.log('Server is running on port 3000');
-});
+th {
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Couleurs des scores */
+.score-par {
+    color: green;
+}
+
+.score-under-par {
+    color: red;
+}
+
+.score-over-par {
+    color: black;
+}
