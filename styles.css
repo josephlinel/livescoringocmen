@@ -1,93 +1,79 @@
-/* Style global */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f8f9fa;
-    color: #343a40;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
     margin: 0;
     padding: 0;
 }
-
-/* En-tête */
+header {
+    background-color: #005bbb;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
 h1 {
-    text-align: center;
-    background-color: #28a745;
-    color: white;
-    padding: 20px;
+    font-size: 2.5em;
+    color: #fff;
     margin: 0;
-    font-size: 24px;
-    text-transform: uppercase;
 }
-
-/* Style du formulaire */
-form {
-    max-width: 600px;
-    margin: 30px auto;
-    background-color: white;
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
-form label, form select, form input, form button {
-    width: 100%;
-    margin: 10px 0;
-    padding: 12px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
-
-form button {
-    background-color: #007bff;
-    color: white;
+.tabs button {
+    flex: 1;
+    padding: 10px;
     border: none;
-    cursor: pointer;
-}
-
-form button:hover {
-    background-color: #0056b3;
-}
-
-/* Style du tableau */
-table {
-    width: 90%;
-    margin: 30px auto;
-    border-collapse: collapse;
-    background-color: white;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-}
-
-th {
-    background-color: #007bff;
+    background-color: #005bbb;
     color: white;
-    padding: 15px;
-    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
 }
-
-td {
-    padding: 15px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
+.tabs button.active {
+    background-color: #00274d;
 }
-
-tr:nth-child(even) {
-    background-color: #f9f9f9;
+.content {
+    display: none;
 }
-
-tr:hover {
-    background-color: #f1f1f1;
+.content.active {
+    display: block;
 }
-
-/* Couleurs des scores */
-.score-par {
-    color: green;
+.players-list select, .score-input input, .score-input select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
-
-.score-under-par {
+.ranking table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.ranking th, .ranking td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+}
+.ranking td.score.negative {
     color: red;
 }
-
-.score-over-par {
+.ranking td.score.neutral {
+    color: green;
+}
+.ranking td.score.positive {
     color: black;
+}
+@media (max-width: 768px) {
+    .tabs button {
+        font-size: 14px;
+    }
 }
