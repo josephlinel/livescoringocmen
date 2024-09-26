@@ -19,16 +19,20 @@ var scores = [];
 
 function addScore() {
     var playerSelect = document.getElementById("playerSelect");
+    var holeSelect = document.getElementById("holeSelect");
+    var roundSelect = document.getElementById("roundSelect");
     var scoreInput = document.getElementById("scoreInput").value;
     var playerName = playerSelect.options[playerSelect.selectedIndex].text;
+    var hole = holeSelect.options[holeSelect.selectedIndex].text;
+    var round = roundSelect.options[roundSelect.selectedIndex].text;
 
-    if (!playerSelect.value || scoreInput === "") {
-        alert("Please select a player and enter a score.");
+    if (!playerSelect.value || !holeSelect.value || !roundSelect.value || scoreInput === "") {
+        alert("Please select a player, hole, round, and enter a score.");
         return;
     }
 
     // Add score to the array
-    scores.push({ player: playerName, score: parseInt(scoreInput) });
+    scores.push({ player: playerName, hole: hole, round: round, score: parseInt(scoreInput) });
 
     // Sort scores
     scores.sort((a, b) => a.score - b.score);
@@ -41,16 +45,23 @@ function addScore() {
     scores.forEach(function (item) {
         var row = document.createElement("tr");
         var playerCell = document.createElement("td");
-        playerCell.textContent = item.player;
+        var holeCell = document.createElement("td");
+        var roundCell = document.createElement("td");
         var scoreCell = document.createElement("td");
+
+        playerCell.textContent = item.player;
+        holeCell.textContent = item.hole;
+        roundCell.textContent = item.round;
         scoreCell.textContent = item.score;
+
         scoreCell.className = "score " + (item.score < 0 ? "negative" : item.score === 0 ? "neutral" : "positive");
         row.appendChild(playerCell);
+        row.appendChild(holeCell);
+        row.appendChild(roundCell);
         row.appendChild(scoreCell);
         tableBody.appendChild(row);
     });
 
     // Reset input fields
     document.getElementById("scoreInput").value = "";
-    playerSelect.value = "";
-}
+    playerSelect
