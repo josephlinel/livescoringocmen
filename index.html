@@ -4,109 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Scoring Golf</title>
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
 
-    <style>
-        /* Style global */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Style pour l'en-tête */
-        h1 {
-            text-align: center;
-            background-color: #007BFF;
-            color: white;
-            padding: 20px;
-            margin: 0;
-        }
-
-        /* Style pour le formulaire */
-        form {
-            max-width: 600px;
-            margin: 30px auto;
-            background: white;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        /* Champs de formulaire */
-        form input, form select, form button {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        /* Bouton d'envoi */
-        form button {
-            background-color: #007BFF;
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
-
-        form button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Style du tableau */
-        table {
-            width: 90%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        /* En-tête du tableau */
-        th {
-            background-color: #007BFF;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
-
-        /* Cellules du tableau */
-        td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        /* Lignes alternées */
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        /* Effet de survol */
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        /* Couleur des scores */
-        .score-par {
-            color: green;
-        }
-
-        .score-under-par {
-            color: red;
-        }
-
-        .score-over-par {
-            color: black;
-        }
-    </style>
+    <!-- Lien vers le fichier CSS -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Live Scoring Qualification OC Men</h1>
@@ -144,7 +44,7 @@
         <button type="submit">Ajouter le score</button>
     </form>
 
-    <h2 style="text-align: center;">Scores en direct :</h2>
+    <h2 style="text-align: center;">Scores en direct</h2>
     <table>
         <thead>
             <tr>
@@ -160,80 +60,7 @@
         </tbody>
     </table>
 
-    <script>
-        // Configuration Firebase (à remplacer avec vos propres informations de projet Firebase)
-        const firebaseConfig = {
-            apiKey: "VOTRE_API_KEY",
-            authDomain: "votre-projet.firebaseapp.com",
-            databaseURL: "https://votre-projet.firebaseio.com",  // L'URL de votre Realtime Database
-            projectId: "votre-projet-id",
-            storageBucket: "votre-projet.appspot.com",
-            messagingSenderId: "VOTRE_MESSAGING_SENDER_ID",
-            appId: "VOTRE_APP_ID"
-        };
-
-        // Initialiser Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const scoresRef = database.ref('scores');
-
-        // Ajouter un score
-        const form = document.getElementById('scoreForm');
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const playerData = document.getElementById('player').value.split(' ');
-            const player = playerData[0];
-            const nationality = playerData[1];
-            const round = document.getElementById('round').value;
-            const hole = document.getElementById('hole').value;
-            const score = document.getElementById('score').value;
-
-            // Envoyer le score à Firebase
-            scoresRef.push({
-                joueur: player,
-                nationalite: nationality,
-                round: round,
-                trou: hole,
-                score: parseInt(score)
-            });
-
-            form.reset(); // Réinitialiser le formulaire après soumission
-        });
-
-        // Afficher les scores en temps réel
-        scoresRef.on('value', (snapshot) => {
-            const scoreTable = document.getElementById('scoreTable');
-            let scoresArray = [];
-
-            snapshot.forEach((scoreSnapshot) => {
-                const scoreData = scoreSnapshot.val();
-                scoresArray.push(scoreData);  // Ajouter chaque score au tableau pour trier plus tard
-            });
-
-            // Trier les scores par ordre croissant (du plus bas au plus élevé)
-            scoresArray.sort((a, b) => a.score - b.score);
-
-            // Réinitialiser le tableau
-            scoreTable.innerHTML = '';
-
-            // Ajouter les scores triés au tableau
-            scoresArray.forEach((scoreData) => {
-                const scoreClass = scoreData.score === 0 ? 'score-par' :
-                                   scoreData.score < 0 ? 'score-under-par' : 'score-over-par';
-
-                const newRow = `
-                    <tr>
-                        <td>${scoreData.joueur}</td>
-                        <td>${scoreData.nationalite}</td>
-                        <td>${scoreData.round}</td>
-                        <td>${scoreData.trou}</td>
-                        <td class="${scoreClass}">${scoreData.score}</td>
-                    </tr>
-                `;
-                scoreTable.innerHTML += newRow;
-            });
-        });
-    </script>
+    <!-- Lien vers le fichier JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
