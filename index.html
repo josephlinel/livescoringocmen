@@ -3,64 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Scoring Golf</title>
-
-    <!-- Lien vers le fichier CSS -->
+    <title>QUALIFICATION LIFE GOING</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Live Scoring Qualification OC Men</h1>
 
-    <!-- Formulaire pour ajouter un score -->
-    <form id="scoreForm">
-        <label for="player">Joueur :</label>
-        <select id="player" required>
-            <option value="Adam Bresnu 🇲🇦">Adam Bresnu 🇲🇦</option>
-            <option value="Dominic Morton 🇬🇧">Dominic Morton 🇬🇧</option>
-            <option value="Jorge de la Cabala 🇲🇽">Jorge de la Cabala 🇲🇽</option>
-            <option value="Chase Williams 🇺🇸">Chase Williams 🇺🇸</option>
-            <option value="Reda El Hali 🇲🇦">Reda El Hali 🇲🇦</option>
-            <option value="Ken Gao 🇦🇺">Ken Gao 🇦🇺</option>
-            <option value="Giani Perello 🇩🇪">Giani Perello 🇩🇪</option>
-            <option value="Dian Wilmot 🇿🇦">Dian Wilmot 🇿🇦</option>
-            <option value="Joseph Linel 🇫🇷">Joseph Linel 🇫🇷</option>
+<header>
+    <h1>QUALIFICATION LIFE GOING</h1>
+</header>
+
+<div class="container">
+    <!-- Tabs for selecting options -->
+    <div class="tabs">
+        <button class="tablink active" onclick="openTab(event, 'players')">Player Selection</button>
+        <button class="tablink" onclick="openTab(event, 'hole')">Hole Selection</button>
+        <button class="tablink" onclick="openTab(event, 'raw')">Raw Selection</button>
+        <button class="tablink" onclick="openTab(event, 'score')">Score Entry</button>
+    </div>
+
+    <!-- Content of the tabs -->
+    <div id="players" class="content active">
+        <h2>Choose a Player</h2>
+        <div class="players-list">
+            <select id="playerSelect">
+                <option value="">-- Select a Player --</option>
+                <option value="1">Adam Bresnu 🇲🇦 (Morocco)</option>
+                <option value="2">Dominic Morton 🇬🇧 (England)</option>
+                <option value="3">Jorge de la Cabala 🇲🇽 (Mexico)</option>
+                <option value="4">Chase Williams 🇺🇸 (United States)</option>
+                <option value="5">Reda El Hali 🇲🇦 (Morocco)</option>
+                <option value="6">Ken Gao 🇦🇺 (Australia)</option>
+                <option value="7">Giani Perello 🇩🇪 (Germany)</option>
+                <option value="8">Dian Wilmot 🇿🇦 (South Africa)</option>
+                <option value="9">Joseph Linel 🇫🇷 (France)</option>
+                <option value="10">Corley 🇦🇺 (Australia)</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="hole" class="content">
+        <h2>Choose a Hole</h2>
+        <select id="holeSelect">
+            <option value="">-- Select a Hole --</option>
+            <option value="1">Hole 1</option>
+            <option value="2">Hole 2</option>
+            <option value="3">Hole 3</option>
+            <option value="4">Hole 4</option>
         </select>
+    </div>
 
-        <label for="round">Round :</label>
-        <select id="round" required>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
+    <div id="raw" class="content">
+        <h2>Choose a Raw</h2>
+        <select id="rawSelect">
+            <option value="">-- Select a Raw --</option>
+            <option value="1">Raw 1</option>
+            <option value="2">Raw 2</option>
+            <option value="3">Raw 3</option>
+            <option value="4">Raw 4</option>
+            <option value="5">Raw 5</option>
         </select>
+    </div>
 
-        <label for="hole">Trou :</label>
-        <input type="number" id="hole" min="1" max="18" required>
+    <div id="score" class="content">
+        <h2>Enter Scores Hole by Hole</h2>
+        <div class="score-input">
+            <input type="number" id="scoreInput" placeholder="Enter score">
+            <button onclick="addScore()">Add Score</button>
+        </div>
+    </div>
 
-        <label for="score">Score :</label>
-        <input type="number" id="score" required>
-
-        <button type="submit">Ajouter le score</button>
-    </form>
-
-    <h2 style="text-align: center;">Scores en direct</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Joueur</th>
-                <th>Nationalité</th>
-                <th>Round</th>
-                <th>Trou</th>
-                <th>Score</th>
-            </tr>
-        </thead>
-        <tbody id="scoreTable">
-            <!-- Les scores en temps réel seront ajoutés ici -->
-        </tbody>
-    </table>
-
-    <!-- Lien vers le fichier JavaScript -->
-    <script src="script.js"></script>
-</body>
-</html>
+    <!-- Ranking -->
+    <div class="ranking">
+       
